@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Posts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+            resize: none;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #posts {
+            margin-top: 20px;
+        }
+
+        .post {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .post-user {
+            font-weight: bold;
+            color: #007bff;
+            margin-left: 40px;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .post-text {
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .user-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            line-height: 30px;
+            font-size: 16px;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>User Posts</h1>
+        <form id="postForm">
+            <textarea id="postContent" placeholder="Write your post here..."></textarea><br>
+            <button type="submit">Post</button>
+        </form>
+        <div id="posts"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const postForm = document.getElementById('postForm');
+            const postsContainer = document.getElementById('posts');
+
+            postForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Get the post content from the textarea
+                const postContent = document.getElementById('postContent').value;
+
+                // Create a new post element
+                const postElement = document.createElement('div');
+                postElement.classList.add('post');
+
+                // Create user icon
+                const userIcon = document.createElement('div');
+                userIcon.classList.add('user-icon');
+                userIcon.textContent = 'U'; // Assuming 'U' represents the user icon
+                postElement.appendChild(userIcon);
+
+                // Create user name element
+                const postUser = document.createElement('div');
+                postUser.classList.add('post-user');
+                postUser.textContent = 'User'; // Replace 'User' with the actual user name
+                postElement.appendChild(postUser);
+
+                // Create post text element
+                const postText = document.createElement('div');
+                postText.classList.add('post-text');
+                postText.textContent = postContent;
+                postElement.appendChild(postText);
+
+                // Append the new post to the posts container
+                postsContainer.appendChild(postElement);
+
+                // Clear the textarea after posting
+                document.getElementById('postContent').value = '';
+
+                // Send post content to backend API
+                fetch('http://127.0.0.1:8000/docs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ post_content: postContent })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data); // Handle API response if needed
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
